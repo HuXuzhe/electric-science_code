@@ -1,0 +1,94 @@
+int count; 
+long step_count=0;
+int delay_time=2000; //初始速度
+int A=5;//加速值
+int enable_a=11,enable_b=6;
+int dir_a=13,dir_b=4;
+int pul_a=12,pul_b=5;
+void setup()  
+{ 
+ 
+  count = 0; 
+  /*setup for motor 1*/
+  pinMode(enable_a,OUTPUT); // Enable  
+  pinMode(pul_a,OUTPUT); // Step  
+  pinMode(dir_a,OUTPUT); // Dir  
+  digitalWrite(enable_a,LOW); // Set Enable low
+  /*setup for motor 2*/
+  pinMode(enable_b,OUTPUT); // Enable  
+  pinMode(pul_b,OUTPUT); // Step  
+  pinMode(dir_b,OUTPUT); // Dir  
+  digitalWrite(enable_b,LOW); // Set Enable low
+}  
+  
+
+void loop() {
+    
+      digitalWrite(dir_a,1);
+      digitalWrite(dir_b,0);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,1);
+      digitalWrite(pul_b,1);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,0);
+      digitalWrite(pul_b,0);
+      count++;  
+      step_count++;  
+    delayMicroseconds(delay_time);
+
+    if(count>A)//每5步加速1微秒//加速
+    {
+      count=0;
+      delay_time-=1;
+     
+      if(delay_time<=800)
+      {
+        delay_time=800;//限制最大速度，否则会不转震动
+      }
+    }
+
+   
+    while(step_count>10000&&step_count<15000)//转1万步之后匀速转5000步//同じ速度過程
+   {  
+      
+      digitalWrite(dir_a,1);
+      digitalWrite(dir_b,0);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,1);
+      digitalWrite(pul_b,1);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,0);
+      digitalWrite(pul_b,0);
+      step_count++;  
+   }
+
+
+   
+   if(step_count>=15000)
+   {
+    delay(1);//停转一秒后减速
+    while(delay_time<2000)
+    {
+      delayMicroseconds(delay_time);
+      digitalWrite(dir_a,1);
+      digitalWrite(dir_b,0);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,1);
+      digitalWrite(pul_b,1);
+      delayMicroseconds(5);
+      digitalWrite(pul_a,0);
+      digitalWrite(pul_b,0);
+      count++;  
+      step_count++;  
+
+
+    if(count>A)//每5步加速1微秒//減速
+    {
+      count=0;
+      delay_time+=1;
+    }
+    }
+    step_count=0;
+    delay(1000);//停转一秒后加速
+   }
+  } 
